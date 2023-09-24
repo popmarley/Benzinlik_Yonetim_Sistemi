@@ -112,7 +112,7 @@ namespace Benzinlik_Uygulamasi
 						string toplamFiyat = worksheet.Cells["H13"].Value.ToString();
 
 						Console.WriteLine(new string('-', 65)); // 65 tane '-' karakteri ile bir ayrac ekledik
-						Console.WriteLine($"TOPLAM:".PadRight(25) + $"{toplamMiktar.PadRight(3)}TL {toplamFiyat.PadLeft(31)} TL\n");
+						Console.WriteLine($"TOPLAM:".PadRight(25) + $"{toplamMiktar.PadRight(2)}Adet {toplamFiyat.PadLeft(31)} TL\n");
 
 
 						Console.WriteLine("Satılan Benzin Özet Tablosu");
@@ -135,7 +135,7 @@ namespace Benzinlik_Uygulamasi
 						string toplamBenzinFiyat = worksheet.Cells["O7"].Value.ToString();
 
 						Console.WriteLine(new string('-', 65)); // 65 tane '-' karakteri ile bir ayrac ekledik
-						Console.WriteLine($"TOPLAM:".PadRight(25) + $"{toplamLitre.PadRight(3)}TL {toplamBenzinFiyat.PadLeft(31)} TL\n");
+						Console.WriteLine($"TOPLAM:".PadRight(25) + $"{toplamLitre.PadRight(3)}Litre {toplamBenzinFiyat.PadLeft(31)} TL\n");
 
 						// Formülleri hesaplat
 						worksheet.Calculate();
@@ -227,6 +227,7 @@ namespace Benzinlik_Uygulamasi
 
 		static void KullaniciIslemleri()
 		{
+
 			while (true)
 			{
 				Console.WriteLine("\nBenzin almak için 1'e, Marketten alışveriş yapmak için 2'ye, Sistemden çıkış için 0'a basınız!");
@@ -251,6 +252,8 @@ namespace Benzinlik_Uygulamasi
 
 		static void KasaIslemleri()
 		{
+			double[] benzinFiyatlari = { 39.63, 41.09, 36.36, 25.26 };  // Benzin fiyatları
+
 			Console.WriteLine("Almak istediğiniz benzin türünü seçiniz!");
 			Console.WriteLine("Tarih:" + "" +DateTime.Now.ToString());
 			Console.WriteLine("\n1) Kurşunsuz Benzin ==> 39,63 TL\n2) Motorin ==> 41,09 TL\n3) Gazyağı ==> 36,36 TL\n4) Fuel Oil ==> 25,26 TL");
@@ -280,6 +283,9 @@ namespace Benzinlik_Uygulamasi
 			Console.Write("Kaç litre alacaksınız?: ");
 			double litre = double.Parse(Console.ReadLine());
 
+			double toplamFiyat = litre * benzinFiyatlari[secim - 1];  // Seçilen benzin türünün fiyatını litreye çarp
+
+
 			ExcelPackage.LicenseContext = LicenseContext.NonCommercial;//Geliştirme amacıyla kullandığım için lisans matirisini ayarladım
 			using (var package = new ExcelPackage(new FileInfo(marketPath)))
 			{
@@ -288,11 +294,13 @@ namespace Benzinlik_Uygulamasi
 				package.Save();
 			}
 
-			Console.WriteLine("\nDolum yapılmıştır fişinizi almayı unutmayın!");
+			Console.WriteLine($"Dolum yapılmıştır.Benzin fiyatı toplam {toplamFiyat} TL'dir. Fişinizi almayı unutmayın!");
 		}
 
 		static void MarketIslemleri()
 		{
+			double[] urunFiyatlari = { 7, 20, 40, 20, 50, 15, 95, 150, 10, 8 };  // Ürün fiyatları
+
 			while (true)
 			{
 				Console.WriteLine("Almak istediğiniz ürünü seçin!");
@@ -341,6 +349,9 @@ namespace Benzinlik_Uygulamasi
 				Console.Write($"Kaç adet alacaksınız?: ");
 				int miktar = int.Parse(Console.ReadLine());
 
+				double toplamFiyat = miktar * urunFiyatlari[secim - 1];  // Seçilen ürünün fiyatını miktarla çarp
+
+
 				using (var package = new ExcelPackage(new FileInfo(marketPath)))
 				{
 					var worksheet = package.Workbook.Worksheets[0];
@@ -361,7 +372,8 @@ namespace Benzinlik_Uygulamasi
 
 				if (Console.ReadLine() == "1")
 				{
-					Console.WriteLine("Ürün alımı başarıyla gerçekleşmiştir fişinizi almayı unutmayın!");
+					Console.WriteLine($"Ürünlerin toplam fiyatı {toplamFiyat} TL'dir. Ürün alımı başarıyla gerçekleşmiştir, fişinizi almayı unutmayın!");
+
 					break;
 				}
 			}
